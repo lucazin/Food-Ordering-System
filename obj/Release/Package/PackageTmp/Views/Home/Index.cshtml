@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Food_Order.Category>
+@{
+    if (Session["Username"] == null) 
+    {
+        Response.Redirect("~/Account/Login/");
+    }
+    else if(Session["Username"].ToString() == "admin"){
+        Response.Redirect("~/Admin/Index/");
+    }
+    ViewBag.Title = "Food Ordering System";
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+
+<div class="page-header header-filter" data-parallax="true" style="background-image: url('/Data/bgIndex.png')">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h1 class="title">Are You Hungry?</h1>
+                <h2>Don't wait!!! </h2>
+                <h2>Let start to order Food Now! </h2>
+                <br>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main main-raised">
+    <div class="container">
+        <div class="section text-center">
+            <div class="card">
+                <div class="card-header card-header-primary">
+                    <h4 class="card-title">CATEGORIES</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var item in Model)
+                        {
+                            <div class="col-md-4" style="text-align:center;">
+                                <div class="mt-3" style="display:inline-block;">
+                                    <a href="/Home/ShowCategoryItems?id=@item.catId"  class="btn btn-primary btn-round btn-lg">@item.name</a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            
+        </div>    
+    </div>
+</div>

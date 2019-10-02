@@ -1,0 +1,101 @@
+﻿@model IEnumerable<Food_Order.Category>
+
+@{
+    
+   if (Session["Username"] == null) 
+    {
+        Response.Redirect("~/Account/Login/");
+    }
+    else if(Session["Username"].ToString() != "admin"){
+        Response.Redirect("~/Home/Index/");
+    }
+    ViewBag.Title = "AddCategory";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int count = 1;
+}
+
+
+<div class="content">
+    <div class="container-fluid">
+        <button class="btn btn-primary ml-auto d-block" id="btnCat" value="Add Category" data-toggle="modal" data-target="#myModal"><i class="material-icons">add</i>New Category</button>
+        <div class="card">
+            <div class="card-header card-header-primary">
+                <h4 class="card-title">CATEGORY</h4>
+            </div>
+            <div class="card-body table-responsive table-striped">
+                <table class="table table-hover">
+                    <thead class="text-primary">
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th>
+                                CATEGORY NAME
+                            </th>                            
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @count.ToString()
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.name)
+                                </td>
+                            </tr>
+                            count++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="card">
+                <div class="card-header card-header-primary" style="display:inline;">
+                    <h4 class="card-title">ADD CATEGORY</h4>
+                </div>
+            </div>
+            @using (Html.BeginForm("SaveCategory", "Admin", FormMethod.Post, new { id = "categoryForm" }))
+            {
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+
+                            <div class="form-group">
+                                <label class="col-form-label">Name :</label>
+                                <input class="form-control" type="text" name="name" required/>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <input type="submit" id="btnCatSave" class="btn btn-primary" value="SAVE">
+                </div>
+            }
+            </div>
+        </div>
+    </div>
+    <script>
+        $('#btnCatSave').click(function (e) {
+            var test = $('#txtName').val();
+            if (test == "") {
+                e.preventDefault();
+                alert("Empty");
+            }
+        });
+        $(document).ready(function () {
+            $("#categoryli").addClass("active");
+        });
+
+    </script>

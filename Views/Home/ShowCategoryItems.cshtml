@@ -1,0 +1,109 @@
+﻿@model Food_Order.ViewModels.CatItemViewModel
+@{
+    if (Session["Username"] == null) 
+    {
+        Response.Redirect("~/Account/Login/");
+    }
+    else if(Session["Username"].ToString() == "admin"){
+        Response.Redirect("~/Admin/Index/");
+    }
+    ViewBag.Title = "ShowCategoryItems";
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+<div class="page-header header-filter" data-parallax="true" style="background-image: url('/Data/CategoryBack.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h1 class="title">@Model.category[0].name</h1>
+                <br>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main main-raised">
+    <div class="container">
+        <div class="section text-center">
+            <div class="card">
+                <div class="card-header card-header-primary">
+                    <h3 class="card-title">@Model.category[0].name</h3>
+                </div>
+            </div>
+            <div class="row">
+                @foreach (var item in Model.foodItem)
+                {
+                    <div class="col-md-3 col-sm-8" style="text-align:center;">
+                        <div class="mt-3" style="display:inline-block;">
+                            <div class="card" style="width:15rem; height:25.2rem; margin:10px 0 10px 0; padding:0px">
+
+                                <img class="card-img-top" src="~/Images/@item.image" alt="image" style="width:auto;height:60%">
+
+                                <div class="card-body" id="myCard" style="padding:0px">
+                                    <h4 class="card-title">@item.name</h4>
+                                    <p class="card-text">@item.description</p>
+                                    <h4 class="text-danger"><b>Rs. @item.price/-</b></h4>
+                                    <button onclick="getData(@item.itemId,'@item.name','@item.description','@item.price','@item.quantity','@item.image');" class="btn btn-primary btn-block" >Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script type="text/javascript">
+    
+    var cart = [];
+    
+    function getData(id, name, description, price, quantity, image) {
+        if (window.localStorage.getItem('cart') != null) {
+            var flag = false;
+            var cartLocal = JSON.parse(window.localStorage.getItem('cart'));
+            cartLocal.forEach(function (d) {
+                if (d.id == id) {
+                    flag = true;                    
+                }
+            });
+            if (flag == false) {
+
+                var data = {
+                    id,
+                    name,
+                    description,
+                    price,
+                    quantity,
+                    image
+                };
+                cartLocal.push(data);
+                localStorage.setItem("cart", JSON.stringify(cartLocal));
+                sessionStorage.setItem("cartCount",cartLocal.length); 
+                $("#lblCartCount").text(cartLocal.length);
+                
+            }
+
+        }
+        else
+        {
+             var data2 = {
+                    id,
+                    name,
+                    description,
+                    price,
+                    quantity,
+                    image
+            };
+            cart.push(data2);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            sessionStorage.setItem("cartCount", cart.length); 
+                $("#lblCartCount").text(cart.length);
+        }
+        
+    }
+</script>

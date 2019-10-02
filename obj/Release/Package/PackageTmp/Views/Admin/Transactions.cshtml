@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Food_Order.ViewModels.UserOrderViewModel>
+
+@{
+   if (Session["Username"] == null) 
+    {
+        Response.Redirect("~/Account/Login/");
+    }
+    else if(Session["Username"].ToString() != "admin"){
+        Response.Redirect("~/Home/Index/");
+    }
+    ViewBag.Title = "Order";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int count = 1;
+}
+
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header card-header-primary">
+                <h4 class="card-title">Transactions</h4>
+            </div>
+            <div class="card-body table-responsive table-striped">
+                <table class="table table-hover" id="myTable">
+                    <thead class="text-primary">
+                        <tr>
+                            <th>#</th>
+                            <th>Transaction ID</th>
+                            <th>Username</th>
+                            <th>Date Time</th>
+                            <th>Total Amount</th>
+                            
+                        </tr>
+                    </thead>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@count.ToString()</td>
+                            <td>@item.order.transId</td>
+                            <td>@item.user.username</td>
+                            <td>@item.order.dateTime</td>
+                            <td>Rs. @item.order.totalPrice /-</td>
+                            
+                        </tr>
+                        count++;
+                    }
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add the following code if you want the name of the file appear on select
+    $(document).ready(function () {
+        $("#transli").addClass("active");
+    });
+</script>

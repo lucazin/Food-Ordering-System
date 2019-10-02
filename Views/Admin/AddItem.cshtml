@@ -1,0 +1,182 @@
+﻿@model Food_Order.ViewModels.CatItemViewModel
+@{
+   if (Session["Username"] == null) 
+    {
+        Response.Redirect("~/Account/Login/");
+    }
+    else if(Session["Username"].ToString() != "admin"){
+        Response.Redirect("~/Home/Index/");
+    }
+    ViewBag.Title = "AddItem";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int count = 1;
+}
+
+
+<div class="content">
+    <div class="container-fluid">
+        <button class="btn btn-primary ml-auto d-block" id="btnItem" data-toggle="modal" data-target="#myModal"><i class="material-icons">add</i>NEW ITEM</button>
+        <div class="card">
+            <div class="card-header card-header-primary">
+                <h4 class="card-title">FOOD ITEMS</h4>
+            </div>
+            <div class="card-body table-responsive table-striped">
+                <table class="table table-hover">
+                    <thead class="text-primary">
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th>
+                                NAME
+                            </th>
+                            <th>
+                                DESCRIPTION
+                            </th>
+                            <th>
+                                PRICE
+                            </th>
+                            <th>
+                                QUANTITY
+                            </th>
+                            <th>
+                                IMAGE
+                            </th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.foodItem)
+                        {
+                        <tr>
+                            <td>
+                                @count.ToString()
+                            </td>
+                            <td>
+                                @item.name
+                            </td>
+                            <td>
+                                @item.description
+                            </td>
+                            <td>
+                                @item.price
+                            </td>
+                            <td>
+                                @item.quantity
+                            </td>
+                            <td>
+                                <img src="~/Images/@item.image" width="100" height="100" />
+                            </td>
+                            <td>
+                                <a href="/Admin/DeleteItem?id=@item.itemId" class="btn btn-rose btn-just-icon">
+                                    <i class="material-icons">delete_forever</i>
+                                </a>
+                            </td>
+                            @if (item.isEnabled == true)
+                            {
+                                <td>
+                                    <a href="/Admin/DisableItem?id=@item.itemId" class="btn btn-primary">
+                                        
+                                           Disable
+                                        
+                                    </a>
+                                </td>
+
+                            }
+                            else
+                            {
+                                <td>
+                                    <a href="/Admin/EnableItem?id=@item.itemId" class="btn btn-primary">
+                                        Enable
+                                    </a>
+                                </td>
+
+                            }
+                        </tr>
+                            count++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="card">
+                <div class="card-header card-header-primary" style="display:inline;">
+                    <h4 class="card-title">ADD ITEM</h4>
+                </div>
+            </div>
+            @using (Html.BeginForm("SaveItem", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+
+                            <div class="form-group">
+                                <div class="col-md-10">
+                                    <label for="categoryList">SELECT CATEGORY</label>
+                                    <select class="form-control" id="categoryList" name="catId">
+                                        @foreach (var item in Model.category)
+                                        {
+                                            <option value="@item.catId">
+                                                @item.name
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">NAME</label>
+                                <div class="col-md-10">
+                                    <input type="text" name="name" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2">DESCRIPTION</label>
+                                <div class="col-md-10">
+                                    <input type="text" name="description" class="form-control" required />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">PRICE</label>
+                                <div class="col-md-10">
+                                    <input type="number" min="0" max="2000" name="price" class="form-control" required />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Quantity</label>
+                                <div class="col-md-10">
+                                    <input type="number" min="0" max="2000" name="quantity" class="form-control" required />
+                                </div>
+                            </div>
+
+                            <div class="col-md-10">
+                                <label class="control-label col">Food Item</label>
+                            </div>
+                            <input type="file" accept=".gif, .jpg, .png" class="form-file-upload" id="files" name="files" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <input type="submit" id="btnItemSave" class="btn btn-primary" value="SAVE">
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    // Add the following code if you want the name of the file appear on select
+    $(document).ready(function () {
+        $("#addItemli").addClass("active");
+    });
+</script>

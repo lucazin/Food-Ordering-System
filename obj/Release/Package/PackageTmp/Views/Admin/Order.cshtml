@@ -1,0 +1,123 @@
+﻿@model IEnumerable<Food_Order.ViewModels.UserOrderViewModel>
+
+@{
+   if (Session["Username"] == null) 
+    {
+        Response.Redirect("~/Account/Login/");
+    }
+    else if(Session["Username"].ToString() != "admin"){
+        Response.Redirect("~/Home/Index/");
+    }
+    ViewBag.Title = "Order";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int count = 1;
+}
+
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header card-header-primary">
+                <h4 class="card-title">Orders</h4>
+            </div>
+            <div class="card-body table-responsive table-striped">
+                <table class="table table-hover" id="myTable">
+                    <thead class="text-primary">
+                        <tr>
+                            <th>#</th>
+                            <th>Username</th>
+                            <th>Date Time</th>
+                            <th>Status</th>
+                            <th>Total Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@count.ToString()</td>
+                            <td>@item.user.username</td>
+                            <td>@item.order.dateTime</td>
+                            @if (item.order.status == "Pending")
+                            {
+                                <td>
+                                    <button class="btn btn-warning btn-block">Pending</button>
+                                </td>
+
+                            }
+                            else
+                            {
+                                <td>
+                                    <button class="btn btn-success btn-block">Delivered</button>
+                                </td>
+                                
+                            }
+                            <td>Rs. @item.order.totalPrice /-</td>
+                            <td>
+                                <button id="btnDetails" class="btn btn-primary btn-just-icon" data-id="@item.order.orderId" title="Order Details">
+                                    <i class="material-icons">
+                                        format_list_bulleted
+                                    </i>
+                                </button>
+                                @if (item.order.status == "Pending")
+                                {
+                                    <a href="/Admin/ChangeStatus?id=@item.order.orderId" id="btnStatus" class="btn btn-primary btn-just-icon" data-id="@item.order.orderId" title="Done">
+                                        <i class="material-icons">
+                                            done_outline
+                                        </i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <button id="btnStatus" class="btn btn-primary btn-just-icon" data-id="@item.order.orderId" title="Done" disabled="true">
+                                        <i class="material-icons">
+                                            done_outline
+                                        </i>
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                        count++;
+                    }
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myModal" class="modal fade w-auto" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="card">
+                <div class="card-header card-header-primary" style="display:inline;">
+                    <h4 class="card-title">Order Detail</h4>
+                </div>
+
+                <div class="card-body table-responsive table-striped" id="myModalBody">
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    // Add the following code if you want the name of the file appear on select
+    $(document).ready(function () {
+        $("#orderli").addClass("active");
+    });
+    var id = 0;
+    $("#myTable").on('click', '#btnDetails', function () {
+        id = $(this).data('id');
+        $.ajax({
+            url: "/Admin/OrderDetails?id=" + id,
+            method: "GET",
+            success: function (response) {
+                $('#myModalBody').html(response);
+                $('#myModal').modal('show');
+            }
+        }
+        );
+    });
+</script>
